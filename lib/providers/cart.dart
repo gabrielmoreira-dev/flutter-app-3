@@ -1,11 +1,11 @@
-import 'package:app3_shop/model/cart_item.dart';
+import 'package:app3_shop/providers/cart_item.dart';
 import 'package:flutter/foundation.dart';
 
 class Cart with ChangeNotifier {
   Map<String, CartItem> _items;
 
   Cart(){
-    _items = {}; 
+    _items = {};
   }
 
   Map<String, CartItem> get items => {..._items};
@@ -31,7 +31,18 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeItem(String productId){
+    _items.remove(productId);
+    notifyListeners();
+  }
+
   int get itemsCount => _items.length;
+
+  double get totalAmount {
+    var total = 0.0;
+    _items.forEach((_, item) => total += item.price * item.quantity);
+    return total;
+  }
 
 
 }

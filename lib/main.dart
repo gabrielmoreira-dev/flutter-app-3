@@ -1,5 +1,6 @@
 import 'package:app3_shop/providers/cart.dart';
 import 'package:app3_shop/providers/products_provider.dart';
+import 'package:app3_shop/screens/cart_screen.dart';
 import 'package:app3_shop/screens/product_detail_screen.dart';
 import 'package:app3_shop/screens/products_overview_screen.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,7 @@ class ShopApp extends StatelessWidget {
         ),
         routes: {
           ProductDetailScreen.routeName: (_) => ProductDetailScreen(),
+          CartScreen.routeName: (_) => CartScreen(),
         },
       ),
     );
