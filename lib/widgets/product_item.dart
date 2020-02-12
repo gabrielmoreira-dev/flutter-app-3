@@ -1,3 +1,4 @@
+import 'package:app3_shop/providers/cart.dart';
 import 'package:app3_shop/providers/product.dart';
 import 'package:app3_shop/screens/product_detail_screen.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
-    final id = product.id;
-    final title = product.title;
-    final imageUrl = product.imageUrl;
+    final cart = Provider.of<Cart>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -18,11 +17,11 @@ class ProductItem extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pushNamed(
               ProductDetailScreen.routeName,
-              arguments: id,
+              arguments: product.id,
             );
           },
           child: Image.network(
-            imageUrl,
+            product.imageUrl,
             fit: BoxFit.cover,
           ),
         ),
@@ -38,14 +37,14 @@ class ProductItem extends StatelessWidget {
             ),
           ),
           title: Text(
-            title,
+            product.title,
             textAlign: TextAlign.center,
           ),
           trailing: IconButton(
-            icon: Icon(Icons.shopping_cart),
-            color: Theme.of(context).accentColor,
-            onPressed: () {},
-          ),
+              icon: Icon(Icons.shopping_cart),
+              color: Theme.of(context).accentColor,
+              onPressed: () =>
+                  cart.addItem(product.id, product.price, product.title)),
         ),
       ),
     );
