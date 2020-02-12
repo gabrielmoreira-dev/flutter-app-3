@@ -1,5 +1,5 @@
 import 'package:app3_shop/providers/cart.dart';
-import 'package:app3_shop/providers/products_provider.dart';
+import 'package:app3_shop/screens/cart_screen.dart';
 import 'package:app3_shop/widgets/badge.dart';
 import 'package:app3_shop/widgets/products_grid.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +18,10 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showFavoritesOnly = false;
 
+  void selectCart(){
+    Navigator.of(context).pushNamed(CartScreen.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +33,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               icon: Icon(
                 Icons.shopping_cart,
               ),
+              onPressed: selectCart,
             ),
             builder: (context, cart, iconButton) => Badge(
               child: iconButton,
