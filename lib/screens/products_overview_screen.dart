@@ -1,4 +1,5 @@
 import 'package:app3_shop/providers/cart.dart';
+import 'package:app3_shop/providers/products_provider.dart';
 import 'package:app3_shop/screens/cart_screen.dart';
 import 'package:app3_shop/widgets/app_drawer.dart';
 import 'package:app3_shop/widgets/badge.dart';
@@ -18,9 +19,23 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showFavoritesOnly = false;
+  var _isInit = true;
+  var _isLoading = false;
 
-  void selectCart(){
+  void selectCart() {
     Navigator.of(context).pushNamed(CartScreen.routeName);
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      setState(() => _isLoading = true);
+      Provider.of<ProductsProvider>(context).fetchProduts().then((_) {
+        setState(() => _isLoading = false);
+        _isInit = false;
+      });
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -63,7 +78,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showFavoritesOnly),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductsGrid(_showFavoritesOnly),
     );
   }
 }
