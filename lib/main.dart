@@ -2,7 +2,7 @@ import 'package:app3_shop/providers/cart.dart';
 import 'package:app3_shop/providers/orders_provider.dart';
 import 'package:app3_shop/providers/products_provider.dart';
 import 'package:app3_shop/screens/cart_screen.dart';
-import 'package:app3_shop/screens/edit_screen_product.dart';
+import 'package:app3_shop/screens/edit_product_screen.dart';
 import 'package:app3_shop/screens/orders_screen.dart';
 import 'package:app3_shop/screens/product_detail_screen.dart';
 import 'package:app3_shop/screens/products_overview_screen.dart';
