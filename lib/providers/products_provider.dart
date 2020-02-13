@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:app3_shop/providers/product.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
   List<Product> _items = [
@@ -46,26 +49,46 @@ class ProductsProvider with ChangeNotifier {
     return _items.firstWhere((p) => p.id == id);
   }
 
-  void addProduct(Product product) {
-    _items.add(Product(
-      title: product.title,
-      price: product.price,
-      description: product.description,
-      imageUrl: product.imageUrl,
-      id: DateTime.now().toString(),
-    ));
-    notifyListeners();
+  Future<void> addProduct(Product product) {
+    const url = 'https://flutter-app3-shop.firebaseio.com/products.json';
+    return http
+        .post(url,
+            body: json.encode(
+              {
+                'title': product.title,
+                'price': product.price,
+                'description': product.description,
+                'imageUrl': product.imageUrl,
+                'isFavorite': product.isFavorite,
+              },
+            ))
+        .then(
+      (response) {
+        _items.add(
+          Product(
+            title: product.title,
+            price: product.price,
+            description: product.description,
+            imageUrl: product.imageUrl,
+            id: json.decode(response.body)['name'],
+          ),
+        );
+        notifyListeners();
+      },
+    ).catchError((error) {
+      throw error;
+    });
   }
 
-  void updateProduct(Product product){
+  void updateProduct(Product product) {
     final productIndex = _items.indexWhere((p) => p.id == product.id);
-    if(productIndex >= 0) {
+    if (productIndex >= 0) {
       _items[productIndex] = product;
       notifyListeners();
     }
   }
 
-  void deleteProduct(String id){
+  void deleteProduct(String id) {
     _items.removeWhere((p) => p.id == id);
     notifyListeners();
   }
