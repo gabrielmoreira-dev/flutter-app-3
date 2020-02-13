@@ -13,11 +13,11 @@ class OrdersScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Orders'),
+        title: const Text('Orders'),
       ),
       body: orderData.orders.isEmpty
           ? Center(
-              child: Text(
+              child: const Text(
                 'No orders included yet!',
                 style: TextStyle(fontSize: 18),
               ),
