@@ -22,10 +22,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _isInit = true;
   var _isLoading = false;
 
-  void selectCart() {
-    Navigator.of(context).pushNamed(CartScreen.routeName);
-  }
-
   @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -36,6 +32,14 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       });
     }
     super.didChangeDependencies();
+  }
+
+  Future<void> _refreshProducts(BuildContext context) async {
+    await Provider.of<ProductsProvider>(context).fetchProduts();
+  }
+
+  void _selectCart() {
+    Navigator.of(context).pushNamed(CartScreen.routeName);
   }
 
   @override
@@ -49,7 +53,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               icon: Icon(
                 Icons.shopping_cart,
               ),
-              onPressed: selectCart,
+              onPressed: _selectCart,
             ),
             builder: (context, cart, iconButton) => Badge(
               child: iconButton,
@@ -82,7 +86,10 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : ProductsGrid(_showFavoritesOnly),
+          : RefreshIndicator(
+              onRefresh: () => this._refreshProducts(context),
+              child: ProductsGrid(_showFavoritesOnly),
+            ),
     );
   }
 }

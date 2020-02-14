@@ -125,9 +125,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       _isSaving = true;
     });
     if (_editedProduct.id != null) {
-      Provider.of<ProductsProvider>(context, listen: false)
+      await Provider.of<ProductsProvider>(context, listen: false)
           .updateProduct(_editedProduct);
-      Navigator.of(context).pop();
     } else {
       try {
         await Provider.of<ProductsProvider>(context, listen: false)
@@ -146,13 +145,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ],
           ),
         );
-      } finally {
-        setState(() {
-          _isSaving = false;
-        });
-        Navigator.of(context).pop();
       }
     }
+    setState(() {
+      _isSaving = false;
+    });
+    Navigator.of(context).pop();
   }
 
   void _updateImageUrl() {
