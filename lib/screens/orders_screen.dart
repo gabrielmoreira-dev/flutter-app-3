@@ -4,57 +4,44 @@ import 'package:app3_shop/widgets/order_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class OrdersScreen extends StatefulWidget {
+class OrdersScreen extends StatelessWidget {
   static const routeName = '/orders';
 
   @override
-  _OrdersScreenState createState() => _OrdersScreenState();
-}
-
-class _OrdersScreenState extends State<OrdersScreen> {
-  var _isLoading = false;
-
-  @override
-  void initState() {
-    setState(() => _isLoading = true);
-    try {
-      Provider.of<OrdersProvider>(context, listen: false)
-          .fetchOrders()
-          .then((_) {
-        setState(() => _isLoading = false);
-      });
-    } catch (e) {
-      // TODO
-    }
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final orderData = Provider.of<OrdersProvider>(context);
+
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Orders'),
       ),
-      body: _isLoading
-          ? Center(
+      body: FutureBuilder(
+        future:
+            Provider.of<OrdersProvider>(context, listen: false).fetchOrders(),
+        builder: (context, dataSnapshot) {
+          if (dataSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(
               child: CircularProgressIndicator(),
-            )
-          : orderData.orders.isEmpty
-              ? Center(
-                  child: const Text(
-                    'No orders included yet!',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                )
-              : ListView.builder(
+            );
+          } else {
+            if (dataSnapshot.error != null) {
+              return Center(
+                child: Text('An error ocurred'),
+              );
+            } else {
+              return Consumer<OrdersProvider>(
+                builder: (context, orderData, child) => ListView.builder(
                   itemCount: orderData.orders.length,
                   itemBuilder: (_, index) => ChangeNotifierProvider.value(
                     value: orderData.orders[index],
                     child: OrderItemCard(),
                   ),
                 ),
+              );
+            }
+          }
+        },
+      ),
       drawer: AppDrawer(),
     );
   }
