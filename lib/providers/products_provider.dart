@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
+  final String token;
   List<Product> _items = [];
+
+  ProductsProvider(this.token, this._items);
 
   List<Product> get items => [..._items];
 
@@ -18,12 +21,13 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> fetchProduts() async {
-    const url = 'https://flutter-app3-shop.firebaseio.com/products.json';
+    final url =
+        'https://flutter-app3-shop.firebaseio.com/products.json?auth=$token';
     try {
       final response = await http.get(url);
       final data = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
-      if(data.isEmpty) return;
+      if (data.isEmpty) return;
       data.forEach((prodId, productData) {
         loadedProducts.add(Product(
             id: prodId,
@@ -41,7 +45,8 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    const url = 'https://flutter-app3-shop.firebaseio.com/products.json';
+    final url =
+        'https://flutter-app3-shop.firebaseio.com/products.json?auth=$token';
     try {
       final response = await http.post(
         url,
@@ -73,7 +78,7 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> updateProduct(Product product) async {
     final url =
-        'https://flutter-app3-shop.firebaseio.com/products/${product.id}.json';
+        'https://flutter-app3-shop.firebaseio.com/products/${product.id}.json?auth=$token';
 
     await http.patch(
       url,
@@ -94,7 +99,8 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = 'https://flutter-app3-shop.firebaseio.com/products/$id.json';
+    final url =
+        'https://flutter-app3-shop.firebaseio.com/products/$id.json?auth=$token';
     final index = _items.indexWhere((p) => p.id == id);
     var existingProduct = _items[index];
     _items.removeAt(index);

@@ -7,7 +7,10 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class OrdersProvider with ChangeNotifier {
+  final String token;
   List<OrderItem> _orders = [];
+
+  OrdersProvider(this.token, this._orders);
 
   List<OrderItem> get orders => [..._orders];
 
@@ -15,7 +18,7 @@ class OrdersProvider with ChangeNotifier {
       _orders.firstWhere((order) => order.id == id);
 
   Future<void> fetchOrders() async {
-    const url = 'https://flutter-app3-shop.firebaseio.com/orders.json';
+    final url = 'https://flutter-app3-shop.firebaseio.com/orders.json?auth=$token';
 
     try {
       final response = await http.get(url);
@@ -50,7 +53,7 @@ class OrdersProvider with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final timeStamp = DateTime.now();
-    const url = 'https://flutter-app3-shop.firebaseio.com/orders.json';
+    final url = 'https://flutter-app3-shop.firebaseio.com/orders.json?auth=$token';
 
     try {
       final response = await http.post(

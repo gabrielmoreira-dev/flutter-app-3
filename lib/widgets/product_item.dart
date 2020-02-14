@@ -1,3 +1,4 @@
+import 'package:app3_shop/providers/auth.dart';
 import 'package:app3_shop/providers/cart.dart';
 import 'package:app3_shop/providers/product.dart';
 import 'package:app3_shop/screens/product_detail_screen.dart';
@@ -36,7 +37,8 @@ class ProductItem extends StatelessWidget {
               color: Theme.of(context).accentColor,
               onPressed: () async {
                 try {
-                  await product.toggleFavoriteStatus();
+                  await product.toggleFavoriteStatus(
+                      Provider.of<Auth>(context, listen: false).token);
                 } catch (e) {
                   scaffold.showSnackBar(
                     SnackBar(
