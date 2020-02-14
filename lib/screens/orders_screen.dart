@@ -4,8 +4,30 @@ import 'package:app3_shop/widgets/order_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   static const routeName = '/orders';
+
+  @override
+  _OrdersScreenState createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  var _isLoading = false;
+
+  @override
+  void initState() {
+    setState(() => _isLoading = true);
+    try {
+      Provider.of<OrdersProvider>(context, listen: false)
+          .fetchOrders()
+          .then((_) {
+        setState(() => _isLoading = false);
+      });
+    } catch (e) {
+      // TODO
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,20 +37,24 @@ class OrdersScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Orders'),
       ),
-      body: orderData.orders.isEmpty
+      body: _isLoading
           ? Center(
-              child: const Text(
-                'No orders included yet!',
-                style: TextStyle(fontSize: 18),
-              ),
+              child: CircularProgressIndicator(),
             )
-          : ListView.builder(
-              itemCount: orderData.orders.length,
-              itemBuilder: (_, index) => ChangeNotifierProvider.value(
-                value: orderData.orders[index],
-                child: OrderItemCard(),
-              ),
-            ),
+          : orderData.orders.isEmpty
+              ? Center(
+                  child: const Text(
+                    'No orders included yet!',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: orderData.orders.length,
+                  itemBuilder: (_, index) => ChangeNotifierProvider.value(
+                    value: orderData.orders[index],
+                    child: OrderItemCard(),
+                  ),
+                ),
       drawer: AppDrawer(),
     );
   }
