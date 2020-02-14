@@ -11,6 +11,9 @@ class OrdersProvider with ChangeNotifier {
 
   List<OrderItem> get orders => [..._orders];
 
+  OrderItem findById(String id) =>
+      _orders.firstWhere((order) => order.id == id);
+
   Future<void> fetchOrders() async {
     const url = 'https://flutter-app3-shop.firebaseio.com/orders.json';
 
