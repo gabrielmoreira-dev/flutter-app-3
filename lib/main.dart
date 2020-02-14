@@ -1,6 +1,8 @@
+import 'package:app3_shop/providers/auth.dart';
 import 'package:app3_shop/providers/cart.dart';
 import 'package:app3_shop/providers/orders_provider.dart';
 import 'package:app3_shop/providers/products_provider.dart';
+import 'package:app3_shop/screens/auth-screen.dart';
 import 'package:app3_shop/screens/cart_screen.dart';
 import 'package:app3_shop/screens/edit_product_screen.dart';
 import 'package:app3_shop/screens/orders_screen.dart';
@@ -19,24 +21,38 @@ class ShopApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: ProductsProvider()),
-        ChangeNotifierProvider.value(value: Cart()),
-        ChangeNotifierProvider.value(value: OrdersProvider()),
-      ],
-      child: MaterialApp(
-        title: 'Shop App',
-        home: ProductsOverviewScreen(),
-        theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.deepOrange,
+        ChangeNotifierProvider.value(value: Auth()),
+        ChangeNotifierProxyProvider<Auth, ProductsProvider>(
+          builder: (context, auth, previousProducts) => ProductsProvider(
+            auth.token,
+            previousProducts == null ? [] : previousProducts.items,
+          ),
         ),
-        routes: {
-          ProductDetailScreen.routeName: (_) => ProductDetailScreen(),
-          CartScreen.routeName: (_) => CartScreen(),
-          OrdersScreen.routeName: (_) => OrdersScreen(),
-          UserProductsScreen.routeName: (_) => UserProductsScreen(),
-          EditProductScreen.routeName: (_) => EditProductScreen(),
-        },
+        ChangeNotifierProxyProvider<Auth, OrdersProvider>(
+          builder: (context, auth, previousOrders) => OrdersProvider(
+            auth.token,
+            previousOrders == null ? [] : previousOrders.orders,
+          ),
+        ),
+        ChangeNotifierProvider.value(value: Cart()),
+      ],
+      child: Consumer<Auth>(
+        builder: (context, auth, _) => MaterialApp(
+          title: 'Shop App',
+          home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+            accentColor: Colors.deepOrange,
+          ),
+          routes: {
+            ProductDetailScreen.routeName: (_) => ProductDetailScreen(),
+            CartScreen.routeName: (_) => CartScreen(),
+            OrdersScreen.routeName: (_) => OrdersScreen(),
+            UserProductsScreen.routeName: (_) => UserProductsScreen(),
+            EditProductScreen.routeName: (_) => EditProductScreen(),
+            ProductsOverviewScreen.routeName: (_) => ProductsOverviewScreen(),
+          },
+        ),
       ),
     );
   }
